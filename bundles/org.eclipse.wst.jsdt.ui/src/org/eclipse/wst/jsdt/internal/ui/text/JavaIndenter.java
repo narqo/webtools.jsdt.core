@@ -1369,6 +1369,39 @@ public final class JavaIndenter {
 			case Symbols.TokenLBRACE:
 				pos= fPosition; // store
 
+				// (XXX,narqo): Why checks for Array in `LBRACE` token
+//				// special: array initializer
+//				if (looksLikeArrayInitializerIntro())
+//					if (fPrefs.prefArrayDeepIndent)
+//						return setFirstElementAlignment(pos, bound);
+//					else
+//						fIndent= fPrefs.prefArrayIndent;
+//				else
+//					fIndent= fPrefs.prefBlockIndent;
+//				
+//
+//				// normal: skip to the statement start before the scope introducer
+//				// opening braces are often on differently ending indents than e.g. a method definition
+//				if (looksLikeArrayInitializerIntro() && !fPrefs.prefIndentBracesForArrays
+//						|| !fPrefs.prefIndentBracesForBlocks) {
+//					fPosition= pos; // restore
+//					return skipToStatementStart(true, true); // set to true to match the first if
+//				} else {
+//					return pos;
+//				}
+				
+				fIndent= fPrefs.prefBlockIndent;
+				return pos;
+
+			case Symbols.TokenLBRACKET:
+				pos= fPosition; // store
+
+				// WTF?
+//				// special: method declaration deep indentation
+//				if (fPrefs.prefArrayDimensionsDeepIndent) {
+//					return setFirstElementAlignment(pos, bound);
+//				}
+				
 				// special: array initializer
 				if (looksLikeArrayInitializerIntro())
 					if (fPrefs.prefArrayDeepIndent)
@@ -1376,29 +1409,13 @@ public final class JavaIndenter {
 					else
 						fIndent= fPrefs.prefArrayIndent;
 				else
-					fIndent= fPrefs.prefBlockIndent;
+					// normal: return the bracket as reference
+					fIndent= fPrefs.prefBracketIndent;
+				
+				fPosition= pos; // restore
+				return skipToStatementStart(true, true); // set to true to match the first if
 
-				// normal: skip to the statement start before the scope introducer
-				// opening braces are often on differently ending indents than e.g. a method definition
-				if (looksLikeArrayInitializerIntro() && !fPrefs.prefIndentBracesForArrays
-						|| !fPrefs.prefIndentBracesForBlocks) {
-					fPosition= pos; // restore
-					return skipToStatementStart(true, true); // set to true to match the first if
-				} else {
-					return pos;
-				}
-
-			case Symbols.TokenLBRACKET:
-				pos= fPosition; // store
-
-				// special: method declaration deep indentation
-				if (fPrefs.prefArrayDimensionsDeepIndent) {
-					return setFirstElementAlignment(pos, bound);
-				}
-
-				// normal: return the bracket as reference
-				fIndent= fPrefs.prefBracketIndent;
-				return pos; // restore
+//				return pos; // restore
 
 			default:
 				Assert.isTrue(false);
